@@ -3,19 +3,24 @@ import joblib
 import numpy as np
 import pandas as pd
 import re
-import plotly.graph_objects as go
 
 st.set_page_config(page_title="Laptop Price Fairness Checker", layout="centered", page_icon="💻")
 
 st.markdown("""
 <style>
+    /* Base */
     html, body, [class*="css"] {
         background-color: #0e0e0e !important;
         color: #f0f0f0 !important;
         font-family: 'Segoe UI', sans-serif;
     }
     .stApp { background-color: #0e0e0e; }
-    .hero { text-align: center; padding: 40px 0 10px 0; }
+
+    /* Title */
+    .hero {
+        text-align: center;
+        padding: 40px 0 10px 0;
+    }
     .hero h1 {
         font-size: 2.8rem;
         font-weight: 800;
@@ -24,7 +29,22 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         margin-bottom: 6px;
     }
-    .hero p { color: #888; font-size: 1rem; margin-top: 0; }
+    .hero p {
+        color: #888;
+        font-size: 1rem;
+        margin-top: 0;
+    }
+
+    /* Card */
+    .card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 16px;
+        padding: 28px;
+        margin: 20px 0;
+    }
+
+    /* Text area */
     .stTextArea textarea {
         background-color: #1a1a1a !important;
         color: #f0f0f0 !important;
@@ -36,14 +56,18 @@ st.markdown("""
         border-color: #4F8BF9 !important;
         box-shadow: 0 0 0 2px rgba(79,139,249,0.2) !important;
     }
+
+    /* Number input */
     .stNumberInput input {
         background-color: #1a1a1a !important;
         color: #f0f0f0 !important;
         border: 1px solid #333 !important;
         border-radius: 10px !important;
     }
+
+    /* Button */
     .stButton > button {
-        background: linear-gradient(90deg, #4F8BF9, #a855f7) !important;
+        background: linear-gradient(90deg, #4F8BF9, #a855f7);
         color: white !important;
         border: none !important;
         border-radius: 10px !important;
@@ -52,8 +76,11 @@ st.markdown("""
         font-weight: 700 !important;
         width: 100% !important;
         margin-top: 10px !important;
+        transition: opacity 0.2s;
     }
     .stButton > button:hover { opacity: 0.85; }
+
+    /* Metrics */
     [data-testid="metric-container"] {
         background: #1a1a1a;
         border: 1px solid #2a2a2a;
@@ -63,6 +90,8 @@ st.markdown("""
     }
     [data-testid="stMetricLabel"] { color: #888 !important; font-size: 13px !important; }
     [data-testid="stMetricValue"] { color: #f0f0f0 !important; font-size: 22px !important; font-weight: 700 !important; }
+
+    /* Verdict box */
     .verdict-box {
         padding: 24px;
         border-radius: 16px;
@@ -75,17 +104,34 @@ st.markdown("""
     .overpriced  { background: rgba(220,38,38,0.15); color: #f87171; border: 2px solid #f87171; }
     .underpriced { background: rgba(59,130,246,0.15); color: #60a5fa; border: 2px solid #60a5fa; }
     .fair        { background: rgba(34,197,94,0.15);  color: #4ade80; border: 2px solid #4ade80; }
+
+    /* Expander */
     .streamlit-expanderHeader {
         background-color: #1a1a1a !important;
         color: #aaa !important;
         border-radius: 10px !important;
     }
+    .streamlit-expanderContent {
+        background-color: #141414 !important;
+        border: 1px solid #2a2a2a !important;
+        border-radius: 0 0 10px 10px !important;
+    }
+
+    /* Dataframe */
+    .stDataFrame { border-radius: 10px; overflow: hidden; }
+
+    /* Divider */
     hr { border-color: #2a2a2a !important; }
+
+    /* Labels */
     label, .stTextArea label, .stNumberInput label {
         color: #aaa !important;
         font-size: 14px !important;
         font-weight: 500 !important;
     }
+
+    /* Spinner */
+    .stSpinner > div { border-top-color: #4F8BF9 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -119,40 +165,6 @@ def load_model():
     return joblib.load('xgb_tuned_model.pkl')
 
 model = load_model()
-
-# ── Gauge Chart ───────────────────────────────────────────────────────────────
-def make_gauge(price_diff_pct):
-    clamped = max(-60, min(100, price_diff_pct))
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number+delta",
-        value=clamped,
-        number={'suffix': '%', 'font': {'size': 28, 'color': '#f0f0f0'}},
-        delta={'reference': 0, 'font': {'size': 16}},
-        gauge={
-            'axis': {'range': [-60, 100], 'tickcolor': '#aaa', 'tickfont': {'color': '#aaa'}},
-            'bar': {'color': '#4F8BF9', 'thickness': 0.3},
-            'bgcolor': '#1a1a1a',
-            'borderwidth': 0,
-            'steps': [
-                {'range': [-60, -FAIRNESS_THRESHOLD], 'color': 'rgba(59,130,246,0.6)'},
-                {'range': [-FAIRNESS_THRESHOLD, FAIRNESS_THRESHOLD], 'color': 'rgba(34,197,94,0.6)'},
-                {'range': [FAIRNESS_THRESHOLD, 100], 'color': 'rgba(220,38,38,0.6)'},
-            ],
-            'threshold': {
-                'line': {'color': 'white', 'width': 4},
-                'thickness': 0.85,
-                'value': clamped
-            }
-        },
-        title={'text': "Price Fairness Gauge", 'font': {'color': '#aaa', 'size': 14}}
-    ))
-    fig.update_layout(
-        paper_bgcolor='#0e0e0e',
-        font_color='#f0f0f0',
-        height=300,
-        margin=dict(t=40, b=0, l=20, r=20)
-    )
-    return fig
 
 # ── Feature Extraction ────────────────────────────────────────────────────────
 def extract_features(text: str) -> dict:
@@ -291,13 +303,10 @@ if st.button("Check Fairness ✦"):
                 flag, css_class, icon = "Fairly Priced", "fair", "🟢"
 
         st.divider()
-
         col1, col2, col3 = st.columns(3)
         col1.metric("Listed Price", f"Rs {actual_price:,.0f}")
         col2.metric("Predicted Price", f"Rs {predicted_price:,.0f}")
         col3.metric("Price Difference", f"{price_diff_pct:+.1f}%")
-
-        st.plotly_chart(make_gauge(price_diff_pct), use_container_width=True, config={'displayModeBar': False})
 
         st.markdown(f"""
         <div class="verdict-box {css_class}">
@@ -307,5 +316,4 @@ if st.button("Check Fairness ✦"):
 
         with st.expander("View Extracted Features"):
             feat_df = pd.DataFrame(features.items(), columns=["Feature", "Value"])
-            feat_df["Value"] = feat_df["Value"].astype(str)
             st.dataframe(feat_df, use_container_width=True, hide_index=True)
