@@ -39,7 +39,7 @@ Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce/
 ### 1. Clone the repository
 
 ```bash
-git clone [repo link here]
+git clone https://github.com/ManjushaMotamarry/Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce.git
 cd Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce
 ```
 
