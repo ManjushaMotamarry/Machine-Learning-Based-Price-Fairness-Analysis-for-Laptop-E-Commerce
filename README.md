@@ -71,7 +71,7 @@ Each notebook is self-contained with markdown cells explaining each step. The mo
 
 # 1. From project root, activate venv
 source venv/bin/activate        # Mac/Linux
-# venv\Scripts\activate         # Windows
+venv\Scripts\activate         # Windows
 
 # 2. Navigate to app folder and install dependencies
 cd streamlit_app
