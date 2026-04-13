@@ -67,6 +67,34 @@ Each notebook is self-contained with markdown cells explaining each step. The mo
 
 ---
 
+## Expected structure after running the notebooks
+
+```
+Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce/
+|-- notebooks/
+|   |-- EDA.ipynb
+|   |-- feature_engineering.ipynb
+|   |-- modeling.ipynb
+|   |-- xgb_tuned_model.pkl
+|-- streamlit_app/
+|   |-- app.py
+|   |-- requirements.txt
+|   |-- xgb_tuned_model.pkl
+|   |-- .streamlit/
+|       |-- secrets.toml
+|-- data/
+|   |-- raw/
+|       |-- laptop_cleaned2.csv
+|   |-- processed/
+|       |-- laptop_eda.csv
+|       |-- laptop_label_encoded.csv
+|       |-- laptop_onehot_encoded.csv
+|       |-- price_fairness_scores.csv
+|-- requirements.txt
+|-- README.md
+|-- FinalProject_doc.pdf
+```
+
 ## Running the Streamlit App
 
 # 1. From project root, activate venv
