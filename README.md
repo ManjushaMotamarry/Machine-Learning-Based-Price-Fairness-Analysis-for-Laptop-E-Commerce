@@ -24,6 +24,7 @@ Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce/
 |       |-- laptop_cleaned2.csv
 |-- requirements.txt
 |-- README.md
+|-- run.sh
 |-- FinalProject_doc.pdf
 ```
 
@@ -54,6 +55,8 @@ pip install -r requirements.txt
 ---
 
 ## Running the Notebooks
+
+Make sure to select the kernel as the previosuly created venv
 
 Run the notebooks in this order:
 
@@ -97,27 +100,52 @@ Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce/
 
 ## Running the Streamlit App
 
-# 1. From project root, activate venv
+Use the provided script to set up and launch the app in one step:
+
+```bash
+bash run.sh
+```
+
+This will create a virtual environment, install all dependencies, and launch the app at `http://localhost:8501`.
+
+If you prefer to run manually:
+
+```bash
+# 1. Activate venv (from project root)
 source venv/bin/activate        # Mac/Linux
-venv\Scripts\activate         # Windows
+venv\Scripts\activate           # Windows
 
-# 2. Navigate to app folder and install dependencies
+# 2. Install dependencies and run
+pip install -r streamlit_app/requirements.txt
 cd streamlit_app
-pip install -r requirements.txt
-
-# 3. Run the app
-streamlit run app.py
-
+python -m streamlit run app.py
+```
 
 The app will open at `http://localhost:8501` in your browser.
 
+
 ### How to use it
 
-1. Paste any laptop product description (e.g. from Amazon or a retailer's website) into the text box
-2. Enter the listed price in INR
+1. Paste any laptop product description into the text box — use listings from **Amazon.in** (not Amazon.com). The model is trained on INR prices, so USD listings will give incorrect results.
+2. Enter the listed price in **INR** (e.g. 90000)
 3. Click **Check Fairness**
 4. The app extracts specs using regex-based parsing, runs inference with the trained XGBoost model, and returns a predicted price and fairness verdict (Overpriced / Fairly Priced / Underpriced)
 
+**Example input:**
+
+```
+Brand: ASUS
+Model Name: ASUS Vivobook 14
+Screen Size: 14 Inches
+Hard Disk Size: 512 GB
+CPU Model: Ryzen AI 5
+RAM Memory Installed Size: 16 GB
+Operating System: Windows 11 Home
+Graphics Card Description: Integrated
+```
+
+**Listed Price:** 90000
+```
 ---
 
 ## Dataset
