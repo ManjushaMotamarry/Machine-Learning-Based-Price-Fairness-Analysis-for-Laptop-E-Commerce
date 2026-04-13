@@ -14,22 +14,17 @@ Machine-Learning-Based-Price-Fairness-Analysis-for-Laptop-E-Commerce/
 |   |-- EDA.ipynb
 |   |-- feature_engineering.ipynb
 |   |-- modeling.ipynb
-|   |-- xgb_tuned_model.pkl
 |-- streamlit_app/
 |   |-- app.py
 |   |-- requirements.txt
-|   |-- xgb_tuned_model.pkl
 |   |-- .streamlit/
 |       |-- secrets.toml
 |-- data/
 |   |-- raw/
-|   |-- processed/
-|       |-- laptop_eda.csv
-|       |-- laptop_label_encoded.csv
-|       |-- laptop_onehot_encoded.csv
-|       |-- price_fairness_scores.csv
+|       |-- laptop_cleaned2.csv
 |-- requirements.txt
 |-- README.md
+|-- FinalProject_doc.pdf
 ```
 
 ---
@@ -74,23 +69,17 @@ Each notebook is self-contained with markdown cells explaining each step. The mo
 
 ## Running the Streamlit App
 
-### 1. Navigate to the app folder
+# 1. From project root, activate venv
+source venv/bin/activate        # Mac/Linux
+# venv\Scripts\activate         # Windows
 
-```bash
+# 2. Navigate to app folder and install dependencies
 cd streamlit_app
-```
-
-### 2. Install app dependencies
-
-```bash
 pip install -r requirements.txt
-```
 
-### 3. Run the app
-
-```bash
+# 3. Run the app
 streamlit run app.py
-```
+
 
 The app will open at `http://localhost:8501` in your browser.
 
